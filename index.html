@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Bookshelf App</title>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="container-title text-center">Bookshelf App</h1>
+        </header>
+        <main>
+            <div class="content">
+                <div class="form-search">
+                    <h2 class="container-header">Cari Buku</h2>
+                    <form action="#" class="form" id="form-search">
+                        <div class="form-group form-title">
+                            <input type="text" name="search" id="search">
+                        </div>
+                    </form>
+                </div>
+                <div class="bookshelf">
+                    <div class="column">
+                        <h2>Belum Selesai Dibaca</h2>
+                        <ul class="books">
+                            <li class="book">
+                                <div>Buku 1</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h2>Sudah Dibaca</h2>
+                        <ul class="books">
+                            <li class="book">
+                                <div>Buku 2</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <aside class="sidebar">
+                <h2 class="container-header text-center">Form Tambah Buku</h2>
+                <form action="#" class="form" id="form-add">
+                    <div class="form-group form-title">
+                        <label for="title">Judul Buku</label>
+                        <input type="text" name="title" id="title" required>
+                    </div>
+                    <div class="form-group form-title">
+                        <label for="author">Nama Penulis</label>
+                        <input type="text" name="author" id="author" required>
+                    </div>
+                    <div class="form-group form-title">
+                        <label for="year">Tahun Terbit</label>
+                        <input type="text" name="year" id="year" required>
+                    </div>
+                    <div class="form-checkbox form-title">
+                        <label for="year">Selesai dibaca?</label>
+                        <input type="checkbox" name="isComplete" id="isComplete">
+                    </div>
+                    <input type="submit" value="Submit" name="Submit" class="btn-submit">
+                </form>
+            </aside>
+        </main>
+        <footer>
+            <p>&copy; 2023 Farma.</p>
+        </footer>
+    </div>
+</body>
+</html>
