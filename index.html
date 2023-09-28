@@ -17,26 +17,23 @@
                     <h2 class="container-header">Cari Buku</h2>
                     <form action="#" class="form" id="form-search">
                         <div class="form-group form-title">
-                            <input type="text" name="search" id="search">
+                            <input type="text" name="search" id="search" placeholder="Judul Buku, Nama Penulis atau Tahun terbit">
+                            <input type="submit" value="cari" class="btn-submit">
                         </div>
                     </form>
                 </div>
                 <div class="bookshelf">
                     <div class="column">
-                        <h2>Belum Selesai Dibaca</h2>
-                        <ul class="books">
-                            <li class="book">
-                                <div>Buku 1</div>
-                            </li>
-                        </ul>
+                        <div class="bookshelf-title">
+                            <h2>Belum Selesai Dibaca</h2>
+                        </div>
+                        <ul id="notComplete"></ul>
                     </div>
                     <div class="column">
-                        <h2>Sudah Dibaca</h2>
-                        <ul class="books">
-                            <li class="book">
-                                <div>Buku 2</div>
-                            </li>
-                        </ul>
+                        <div class="bookshelf-title">
+                            <h2>Sudah Dibaca</h2>
+                        </div>
+                        <ul id="complete"></ul>
                     </div>
                 </div>
             </div>
@@ -53,13 +50,13 @@
                     </div>
                     <div class="form-group form-title">
                         <label for="year">Tahun Terbit</label>
-                        <input type="text" name="year" id="year" required>
+                        <input type="number" name="year" id="year" required>
                     </div>
                     <div class="form-checkbox form-title">
                         <label for="year">Selesai dibaca?</label>
                         <input type="checkbox" name="isComplete" id="isComplete">
                     </div>
-                    <input type="submit" value="Submit" name="Submit" class="btn-submit">
+                    <input type="submit" value="submit" name="submit" class="btn-submit">
                 </form>
             </aside>
         </main>
@@ -67,5 +64,7 @@
             <p>&copy; 2023 Farma.</p>
         </footer>
     </div>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
