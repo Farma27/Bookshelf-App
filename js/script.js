@@ -29,7 +29,7 @@ function createBook(id, title, author, year, isComplete) {
         cursor: pointer;
     `
     changeButton.addEventListener("click", function () {
-        toggleStatusBuku(id);
+        toggleStatusBuku(newBook, changeButton);
     });
     buttonGroup.appendChild(changeButton);
 
@@ -59,9 +59,7 @@ function tambahBuku() {
     const author = document.getElementById("author").value;
     const year = document.getElementById("year").value;
     const isComplete = document.getElementById("isComplete").checked;
-
     const id = Date.now().toString();
-
     const book = {
         id,
         title,
@@ -96,8 +94,6 @@ function loadBooks() {
     });
 }
 
-window.addEventListener("load", loadBooks);
-
 function deleteBook(bookId) {
     const confirmation = confirm("Apakah Anda yakin ingin menghapus buku ini?");
     if (confirmation) {
@@ -112,38 +108,14 @@ function deleteBook(bookId) {
     }
 }
 
-function toggleStatusBuku(bookId, changeButton) {
-    const book = document.querySelector(`li[data-id="${bookId}"]`);
-    if (!book) {
-        return;
-    }
-
+function toggleStatusBuku(book, changeButton) {
     const targetBookshelf = book.parentNode.id === "complete" ? document.getElementById("notComplete") : document.getElementById("complete");
 
     if (changeButton.textContent === "Sudah Dibaca") {
         changeButton.textContent = "Belum Selesai Dibaca";
-
-        const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
-        const updatedBooks = booksInStorage.map((book) => {
-            if (book.id === bookId) {
-                book.isComplete = false;
-            }
-            return book;
-        });
-        localStorage.setItem("books", JSON.stringify(updatedBooks));
     } else {
         changeButton.textContent = "Sudah Dibaca";
-
-        const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
-        const updatedBooks = booksInStorage.map((book) => {
-            if (book.id === bookId) {
-                book.isComplete = true;
-            }
-            return book;
-        });
-        localStorage.setItem("books", JSON.stringify(updatedBooks));
     }
-
     targetBookshelf.appendChild(book);
 }
 
@@ -173,3 +145,5 @@ formAdd.addEventListener("submit", function (event) {
     event.preventDefault();
     tambahBuku();
 });
+
+window.addEventListener("load", loadBooks);
