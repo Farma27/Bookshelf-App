@@ -1,4 +1,3 @@
-// Fungsi untuk membuat buku baru
 function createBook(title, author, year, isComplete) {
     const newBook = document.createElement("li");
     newBook.innerHTML = `
@@ -15,7 +14,6 @@ function createBook(title, author, year, isComplete) {
     `;
     newBook.appendChild(buttonGroup);
 
-    // Tambahkan tombol pindah
     const changeButton = document.createElement("button");
     changeButton.textContent = isComplete ? "Belum Selesai Dibaca" : "Sudah Dibaca";
     changeButton.style.cssText = `
@@ -34,7 +32,6 @@ function createBook(title, author, year, isComplete) {
     });
     buttonGroup.appendChild(changeButton);
 
-    // Tambahkan tombol delete
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Hapus";
     deleteButton.style.cssText = `
@@ -56,7 +53,6 @@ function createBook(title, author, year, isComplete) {
     return newBook;
 }
 
-// Fungsi untuk menambahkan buku ke dalam rak buku
 function tambahBuku() {
     const title = document.getElementById("title").value;
     const author = document.getElementById("author").value;
@@ -68,14 +64,12 @@ function tambahBuku() {
     
     bookshelf.appendChild(newBook);
 
-    // Mengosongkan input form setelah menambahkan buku
     document.getElementById("title").value = "";
     document.getElementById("author").value = "";
     document.getElementById("year").value = "";
     document.getElementById("isComplete").checked = false;
 }
 
-// Fungsi untuk menghapus buku dari rak buku
 function deleteBook(book) {
     const confirmation = confirm("Apakah Anda yakin ingin menghapus buku ini?");
     if (confirmation) {
@@ -83,7 +77,6 @@ function deleteBook(book) {
     }
 }
 
-// Fungsi untuk memindahkan status buku antara "Sudah Dibaca" dan "Belum Selesai Dibaca"
 function toggleStatusBuku(book, changeButton) {
     const targetBookshelf = book.parentNode.id === "complete" ? document.getElementById("notComplete") : document.getElementById("complete");
 
@@ -96,7 +89,6 @@ function toggleStatusBuku(book, changeButton) {
     targetBookshelf.appendChild(book);
 }
 
-// Fungsi untuk mencari buku berdasarkan kata kunci
 function searchBooks() {
     const keyword = document.getElementById("search").value.toLowerCase();
     const allBooks = document.querySelectorAll("li");
@@ -111,17 +103,15 @@ function searchBooks() {
     });
 }
 
-// Menangani submit form pencarian
 const formSearch = document.getElementById("form-search");
 formSearch.addEventListener("submit", function (event) {
-    event.preventDefault(); // Mencegah form melakukan reload halaman
-    searchBooks(); // Memanggil fungsi cariBuku
+    event.preventDefault();
+    searchBooks();
 });
 
 
-// Menangani submit form
 const formAdd = document.getElementById("form-add");
 formAdd.addEventListener("submit", function (event) {
-    event.preventDefault(); // Mencegah form melakukan reload halaman
-    tambahBuku(); // Memanggil fungsi tambahBuku
+    event.preventDefault();
+    tambahBuku();
 });
