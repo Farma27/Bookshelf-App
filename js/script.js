@@ -1,5 +1,6 @@
-function createBook(title, author, year, isComplete) {
+function createBook(id, title, author, year, isComplete) {
     const newBook = document.createElement("li");
+    newBook.dataset.id = id;
     newBook.innerHTML = `
         <h3>${title}</h3>
         <p>Nama Penulis: ${author}</p>
@@ -28,7 +29,7 @@ function createBook(title, author, year, isComplete) {
         cursor: pointer;
     `
     changeButton.addEventListener("click", function () {
-        toggleStatusBuku(newBook, changeButton);
+        toggleStatusBuku(id);
     });
     buttonGroup.appendChild(changeButton);
 
@@ -46,7 +47,7 @@ function createBook(title, author, year, isComplete) {
         cursor: pointer;
     `
     deleteButton.addEventListener("click", function () {
-        deleteBook(newBook);
+        deleteBook(id);
     });
     buttonGroup.appendChild(deleteButton);
 
@@ -59,8 +60,23 @@ function tambahBuku() {
     const year = document.getElementById("year").value;
     const isComplete = document.getElementById("isComplete").checked;
 
+    const id = Date.now().toString();
+
+    const book = {
+        id,
+        title,
+        author,
+        year,
+        isComplete,
+    };
+
+    const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
+    booksInStorage.push(book);
+
+    localStorage.setItem("books", JSON.stringify(booksInStorage));
+
     const bookshelf = isComplete ? document.getElementById("complete") : document.getElementById("notComplete");
-    const newBook = createBook(title, author, year, isComplete);
+    const newBook = createBook(id, title, author, year, isComplete);
     
     bookshelf.appendChild(newBook);
 
@@ -70,24 +86,67 @@ function tambahBuku() {
     document.getElementById("isComplete").checked = false;
 }
 
-function deleteBook(book) {
+function loadBooks() {
+    const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
+
+    booksInStorage.forEach((book) => {
+        const newBook = createBook(book.id, book.title, book.author, book.year, book.isComplete);
+        const bookshelf = book.isComplete ? document.getElementById("complete") : document.getElementById("notComplete");
+        bookshelf.appendChild(newBook);
+    });
+}
+
+window.addEventListener("load", loadBooks);
+
+function deleteBook(bookId) {
     const confirmation = confirm("Apakah Anda yakin ingin menghapus buku ini?");
     if (confirmation) {
-        book.remove();
+        const book = document.querySelector(`li[data-id="${bookId}"]`);
+        if (book) {
+            book.remove();
+        }
+
+        const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
+        const updatedBooks = booksInStorage.filter((book) => book.id !== bookId);
+        localStorage.setItem("books", JSON.stringify(updatedBooks));
     }
 }
 
-function toggleStatusBuku(book, changeButton) {
+function toggleStatusBuku(bookId, changeButton) {
+    const book = document.querySelector(`li[data-id="${bookId}"]`);
+    if (!book) {
+        return;
+    }
+
     const targetBookshelf = book.parentNode.id === "complete" ? document.getElementById("notComplete") : document.getElementById("complete");
 
     if (changeButton.textContent === "Sudah Dibaca") {
         changeButton.textContent = "Belum Selesai Dibaca";
+
+        const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
+        const updatedBooks = booksInStorage.map((book) => {
+            if (book.id === bookId) {
+                book.isComplete = false;
+            }
+            return book;
+        });
+        localStorage.setItem("books", JSON.stringify(updatedBooks));
     } else {
         changeButton.textContent = "Sudah Dibaca";
+
+        const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
+        const updatedBooks = booksInStorage.map((book) => {
+            if (book.id === bookId) {
+                book.isComplete = true;
+            }
+            return book;
+        });
+        localStorage.setItem("books", JSON.stringify(updatedBooks));
     }
 
     targetBookshelf.appendChild(book);
 }
+
 
 function searchBooks() {
     const keyword = document.getElementById("search").value.toLowerCase();
@@ -108,7 +167,6 @@ formSearch.addEventListener("submit", function (event) {
     event.preventDefault();
     searchBooks();
 });
-
 
 const formAdd = document.getElementById("form-add");
 formAdd.addEventListener("submit", function (event) {
