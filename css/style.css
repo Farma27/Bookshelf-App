@@ -71,7 +71,7 @@ main {
 
 .column {
     flex: 1;
-    height: 325px;
+    height: 345px;
     border: 1px solid #ccc;
     border-radius: 10px;
     margin: 0 10px 25px 10px;
@@ -151,7 +151,8 @@ main {
     font-size: 1.2rem;
 }
 
-input[type=text], input[type=number] {
+input[type=text], 
+input[type=number] {
     background: white;
     border-radius: 8px;
     padding: 8px;
@@ -169,10 +170,6 @@ input[type=text]:focus {
     background-color: white;
 }
 
-.btn-submit:focus {
-    outline: none;
-}
-
 .btn-submit {
     width: fit-content;
     border-radius: 16px;
@@ -188,6 +185,10 @@ input[type=text]:focus {
     background: green;
     color: white;
     transition: background-color 0.5s ease, colot 0.3s ease;
+}
+
+.btn-submit:focus {
+    outline: none;
 }
 
 .disable-link {
@@ -234,7 +235,15 @@ input[type=text]:focus {
 
 footer {
     text-align: center;
-    padding: 20px;
+    padding: 10px;
     background-color: #333;
     color: #fff;
+}
+
+/* Mobile */
+@media screen and (max-width: 600px) {
+    .sidebar {
+        width: 80%;
+        margin: 40px auto;
+    }
 }
