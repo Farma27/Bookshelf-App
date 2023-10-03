@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     const formSearch = document.getElementById("form-search")
-    formSearch.addEventListener("cari", (e) => {
+    formSearch.addEventListener("submit", (e) => {
         e.preventDefault()
         searchBooks()
     })
@@ -225,14 +225,15 @@ function loadData() {
 
 /** function for searching books */
 function searchBooks() {
-    const keyword = document.getElementById("search").value.toLowerCase()
-    const allBooks = document.querySelectorAll("li")
+    const keyword = document.getElementById("search").value.toLowerCase();
+    const allBooks = document.querySelectorAll("li");
+
     allBooks.forEach(function (books) {
-        const booksInfo = books.textContent.toLowerCase()
+        const booksInfo = books.textContent.toLowerCase();
         if (booksInfo.includes(keyword)) {
-            books.style.display = "block"
+            books.style.display = "";
         } else {
-            books.style.display = "none"
+            books.style.display = "none";
         }
-    })
+    });
 }
