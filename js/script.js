@@ -1,82 +1,49 @@
-function createBook(id, title, author, year, isComplete) {
-    const newBook = document.createElement("li");
-    newBook.dataset.id = id;
-    newBook.innerHTML = `
-        <h3>${title}</h3>
-        <p>Nama Penulis: ${author}</p>
-        <p>Tahun Terbit: ${year}</p>
-    `;
+/** 
+ * declaration of book array and localStorage key
+ * @param {object[]} book - data buku
+ * @param {any} RENDER_KEY - render event
+ * @param {any} SAVE_KEY - saving book data to localStorage
+ * @param {any} STORAGE_KEY - localStorage key
+ */
+const books = []
+const RENDER_KEY = 'render-book'
+const SAVE_KEY = 'save-book'
+const STORAGE_KEY = 'bookshelf-app'
 
-    const buttonGroup = document.createElement("div");
-    buttonGroup.style.cssText = `
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    `;
-    newBook.appendChild(buttonGroup);
+/** created event when web loaded */
+document.addEventListener('DOMContentLoaded', () => {
+    const formAdd = document.getElementById('form-add')
+    formAdd.addEventListener("submit", (e) => {
+        e.preventDefault()
+        addBook()
+    })
 
-    const changeButton = document.createElement("button");
-    changeButton.textContent = isComplete ? "Belum Selesai Dibaca" : "Sudah Dibaca";
-    changeButton.style.cssText = `
-        width: fit-content;
-        border-radius: 16px;
-        padding: 6px 12px;
-        margin-bottom: 5px;
-        margin-left: 5px;
-        color: black;
-        font-size: 1rem;
-        align-self: flex-start;
-        cursor: pointer;
-    `
-    changeButton.addEventListener("click", function () {
-        toggleStatusBuku(newBook, changeButton);
-    });
-    buttonGroup.appendChild(changeButton);
+    const formSearch = document.getElementById("form-search")
+    formSearch.addEventListener("cari", (e) => {
+        e.preventDefault()
+        searchBooks()
+    })
 
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Hapus";
-    deleteButton.style.cssText = `
-        width: fit-content;
-        border-radius: 16px;
-        padding: 6px 12px;
-        margin-bottom: 5px;
-        margin-right: 5px;
-        color: black;
-        font-size: 1rem;
-        align-self: flex-end;
-        cursor: pointer;
-    `
-    deleteButton.addEventListener("click", function () {
-        deleteBook(id);
-    });
-    buttonGroup.appendChild(deleteButton);
+    if (isStorageExist()) {
+        loadData()
+    }
+})
 
-    return newBook;
-}
+/** function for adding books */
+function addBook() {
+    const title = document.getElementById("title").value
+    const author = document.getElementById("author").value
+    const year = document.getElementById("year").value
+    const isComplete = document.getElementById("isComplete").checked
 
-function tambahBuku() {
-    const title = document.getElementById("title").value;
-    const author = document.getElementById("author").value;
-    const year = document.getElementById("year").value;
-    const isComplete = document.getElementById("isComplete").checked;
-    const id = Date.now().toString();
-    const book = {
-        id,
-        title,
-        author,
-        year,
-        isComplete,
-    };
+    /** @function */
+    const id = generateId()
+    const booksData = generateBooksData(id, title, author, year, isComplete)
 
-    const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
-    booksInStorage.push(book);
+    books.push(booksData)
 
-    localStorage.setItem("books", JSON.stringify(booksInStorage));
-
-    const bookshelf = isComplete ? document.getElementById("complete") : document.getElementById("notComplete");
-    const newBook = createBook(id, title, author, year, isComplete);
-    
-    bookshelf.appendChild(newBook);
+    document.dispatchEvent(new Event(RENDER_KEY))
+    saveBooks()
 
     document.getElementById("title").value = "";
     document.getElementById("author").value = "";
@@ -84,66 +51,188 @@ function tambahBuku() {
     document.getElementById("isComplete").checked = false;
 }
 
-function loadBooks() {
-    const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
-
-    booksInStorage.forEach((book) => {
-        const newBook = createBook(book.id, book.title, book.author, book.year, book.isComplete);
-        const bookshelf = book.isComplete ? document.getElementById("complete") : document.getElementById("notComplete");
-        bookshelf.appendChild(newBook);
-    });
+/** 
+ * generate book id
+ * @generator
+ * @yields {number}
+ */
+function generateId() {
+    return +new Date()
 }
 
-function deleteBook(bookId) {
-    const confirmation = confirm("Apakah Anda yakin ingin menghapus buku ini?");
-    if (confirmation) {
-        const book = document.querySelector(`li[data-id="${bookId}"]`);
-        if (book) {
-            book.remove();
-        }
-
-        const booksInStorage = JSON.parse(localStorage.getItem("books")) || [];
-        const updatedBooks = booksInStorage.filter((book) => book.id !== bookId);
-        localStorage.setItem("books", JSON.stringify(updatedBooks));
+/**
+ * generate books object
+ * @generator
+ * @yields {object}
+ */
+function generateBooksData(id, title, author, year, isComplete) {
+    return {
+        id, 
+        title, 
+        author, 
+        year, 
+        isComplete
     }
 }
 
-function toggleStatusBuku(book, changeButton) {
-    const targetBookshelf = book.parentNode.id === "complete" ? document.getElementById("notComplete") : document.getElementById("complete");
+/** create render event */
+document.addEventListener(RENDER_KEY, () => {
+    const incompleteBooks = document.getElementById('incomplete')
+    incompleteBooks.innerHTML = ''
 
-    if (changeButton.textContent === "Sudah Dibaca") {
-        changeButton.textContent = "Belum Selesai Dibaca";
-    } else {
-        changeButton.textContent = "Sudah Dibaca";
-    }
-    targetBookshelf.appendChild(book);
-}
+    const completeBooks = document.getElementById('complete')
+    completeBooks.innerHTML = ''
 
-
-function searchBooks() {
-    const keyword = document.getElementById("search").value.toLowerCase();
-    const allBooks = document.querySelectorAll("li");
-
-    allBooks.forEach(function (books) {
-        const booksInfo = books.textContent.toLowerCase();
-        if (booksInfo.includes(keyword)) {
-            books.style.display = "block";
+    for (const bookItem of books) {
+        const bookElement = createBook(bookItem)
+        if (bookItem.isComplete) {
+            completeBooks.append(bookElement)
         } else {
-            books.style.display = "none";
+            incompleteBooks.append(bookElement)
         }
-    });
+    }
+})
+
+/** 
+ * function for making books
+ * @param {any} book 
+ */
+function createBook(book) {
+    const newBook = document.createElement("li")
+    if (book.isComplete) {
+        newBook.innerHTML = `
+            <h3>${book.title}</h3>
+            <p>Nama Penulis: ${book.author}</p>
+            <p>Tahun Terbit: ${book.year}</p>
+            <div class="btn-group">
+                <button class="btn-change" onclick="incompleteBook(${book.id});">Belum Selesai dibaca</button>
+                <button class="btn-delete" onclick="return confirm('Apakah kamu yakin akan menghapus data ini?') ? removeBook(${book.id}) : '';">Hapus</button>
+
+            </div>
+        `
+    } else {
+        newBook.innerHTML = `
+            <h3>${book.title}</h3>
+            <p>Nama Penulis: ${book.author}</p>
+            <p>Tahun Terbit: ${book.year}</p>
+            <div class="btn-group">
+                <button class="btn-change" onclick="completeBook(${book.id});">Selesai dibaca</button>
+                <button class="btn-delete" onclick="return confirm('Apakah kamu yakin akan menghapus data ini?') ? removeBook(${book.id}) : '';">Hapus</button>
+
+            </div>
+        `
+    }
+
+    return newBook
 }
 
-const formSearch = document.getElementById("form-search");
-formSearch.addEventListener("submit", function (event) {
-    event.preventDefault();
-    searchBooks();
-});
+/** function for find book */
+function findBook(bookId) {
+    for (const bookItem of books) {
+        if (bookItem.id === bookId) {
+            return bookItem
+        }
+    }
 
-const formAdd = document.getElementById("form-add");
-formAdd.addEventListener("submit", function (event) {
-    event.preventDefault();
-    tambahBuku();
-});
+    return null
+}
 
-window.addEventListener("load", loadBooks);
+/** function for find index of book */
+function findBookIndex(bookId) {
+    for (const index in books) {
+        if (books[index].id === bookId) {
+            return index
+        }
+    }
+
+    return -1
+}
+
+/**
+ * function for change book status to complete
+ * @param {number} bookId
+ */
+function completeBook(bookId) {
+    const book = findBook(bookId)
+
+    if (book === null) return
+
+    book.isComplete = true
+    document.dispatchEvent(new Event(RENDER_KEY))
+    saveBooks()
+}
+
+/**
+ * function for change book status to incomplete
+ * @param {number} bookId
+ */
+function incompleteBook(bookId) {
+    const book = findBook(bookId)
+
+    if (book == null) return
+
+    book.isComplete = false
+    document.dispatchEvent(new Event(RENDER_KEY))
+    saveBooks()
+}
+
+/**
+ * function for removing book
+ * @param {number} bookId
+ */
+function removeBook(bookId) {
+    const book = findBookIndex(bookId)
+
+    if (book === -1) return
+
+    books.splice(book, 1)
+    document.dispatchEvent(new Event(RENDER_KEY))
+    saveBooks()
+}
+
+/** function for saving book to localStorage */
+function saveBooks() {
+    if(isStorageExist()) {
+        const parsed = JSON.stringify(books)
+        localStorage.setItem(STORAGE_KEY, parsed)
+        document.dispatchEvent(new Event(SAVE_KEY))
+    }
+}
+
+/** function for checking browser support in localStorage */
+function isStorageExist() {
+    if (typeof (storage) === undefined) {
+        alert ('Browser not supported for localStorage')
+        return false;
+    }
+
+    return true
+}
+
+/** function for loading data from localStorage */
+function loadData() {
+    const serializedData = localStorage.getItem(STORAGE_KEY)
+    let data = JSON.parse(serializedData)
+
+    if (data !== null) {
+        for (const book of data) {
+            books.push(book)
+        }
+    }
+
+    document.dispatchEvent(new Event(RENDER_KEY))
+}
+
+/** function for searching books */
+function searchBooks() {
+    const keyword = document.getElementById("search").value.toLowerCase()
+    const allBooks = document.querySelectorAll("li")
+    allBooks.forEach(function (books) {
+        const booksInfo = books.textContent.toLowerCase()
+        if (booksInfo.includes(keyword)) {
+            books.style.display = "block"
+        } else {
+            books.style.display = "none"
+        }
+    })
+}

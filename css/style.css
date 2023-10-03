@@ -202,6 +202,36 @@ input[type=text]:focus {
     margin: auto 0;
 }
 
+.btn-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.btn-change {
+    width: fit-content;
+    border-radius: 16px;
+    padding: 6px 12px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    color: black;
+    font-size: 1rem;
+    align-self: flex-start;
+    cursor: pointer;
+}
+
+.btn-delete {
+    width: fit-content;
+    border-radius: 16px;
+    padding: 6px 12px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    color: black;
+    font-size: 1rem;
+    align-self: flex-end;
+    cursor: pointer;
+}
+
 footer {
     text-align: center;
     padding: 20px;
