@@ -1,6 +1,18 @@
 /** 
+    [
+        {
+            id: number | string,
+            title: string,
+            author: string,
+            year: number,
+            isComplete: boolean
+        }
+    ]
+ */
+
+/** 
  * declaration of book array and localStorage key
- * @param {object[]} book - data buku
+ * @param {any} books - data buku
  * @param {any} RENDER_KEY - render event
  * @param {any} SAVE_KEY - saving book data to localStorage
  * @param {any} STORAGE_KEY - localStorage key
@@ -33,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function addBook() {
     const title = document.getElementById("title").value
     const author = document.getElementById("author").value
-    const year = document.getElementById("year").value
+    const year = parseInt(document.getElementById("year").value)
     const isComplete = document.getElementById("isComplete").checked
 
     /** @function */
@@ -64,6 +76,11 @@ function generateId() {
  * generate books object
  * @generator
  * @yields {object}
+ * @param {number} id - unique id for each books data
+ * @param {string} title
+ * @param {string} author 
+ * @param {number} year 
+ * @param {boolean} isComplete - status of the books
  */
 function generateBooksData(id, title, author, year, isComplete) {
     return {
@@ -194,10 +211,12 @@ function removeBook(bookId) {
 function saveBooks() {
     if(isStorageExist()) {
         const parsed = JSON.stringify(books)
+        
         localStorage.setItem(STORAGE_KEY, parsed)
         document.dispatchEvent(new Event(SAVE_KEY))
     }
 }
+
 
 /** function for checking browser support in localStorage */
 function isStorageExist() {
